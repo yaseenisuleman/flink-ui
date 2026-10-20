@@ -1,0 +1,41 @@
+# Local stack: stock Flink images plus flink-ui.
+#   docker compose up --build    then open http://localhost:8080
+# The Flink services use the official image unchanged; only flink-ui is built here.
+
+x-flink-properties: &flink-properties |
+  jobmanager.rpc.address: jobmanager
+  rest.address: jobmanager
+  taskmanager.numberOfTaskSlots: 2
+
+services:
+  jobmanager:
+    image: flink:2.3.0-scala_2.12-java17
+    command: jobmanager
+    environment:
+      FLINK_PROPERTIES: *flink-properties
+
+  taskmanager:
+    image: flink:2.3.0-scala_2.12-java17
+    command: taskmanager
+    depends_on: [jobmanager]
+    environment:
+      FLINK_PROPERTIES: *flink-properties
+
+  sql-gateway:
+    image: flink:2.3.0-scala_2.12-java17
+    # Pass-through command: the entrypoint does not apply FLINK_PROPERTIES here
+    command: >-
+      bin/sql-gateway.sh start-foreground
+      -Dsql-gateway.endpoint.rest.address=0.0.0.0
+      -Drest.address=jobmanager
+    depends_on: [jobmanager]
+
+  flink-ui:
+    build: .
+    image: flink-ui
+    depends_on: [jobmanager]
+    ports:
+      - "8080:8080"
+    environment:
+      FLINK_REST_URL: http://jobmanager:8081
+      SQL_GATEWAY_URL: http://sql-gateway:8083

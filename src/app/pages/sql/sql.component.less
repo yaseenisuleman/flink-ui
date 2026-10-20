@@ -1,0 +1,115 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+:host {
+  display: block;
+}
+
+nz-card {
+  display: block;
+  margin-bottom: 1rem;
+}
+
+.editor {
+  overflow: hidden;
+  height: 260px;
+  margin: -1.25rem;
+  border-radius: 0 0 var(--app-radius) var(--app-radius);
+
+  nz-code-editor {
+    height: 100%;
+  }
+}
+
+.hint {
+  margin-left: 0.5rem;
+  font-weight: 400;
+}
+
+kbd {
+  margin-left: 0.25rem;
+  padding: 0 0.3rem;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 0.25rem;
+  font-size: 0.7rem;
+  font-family: var(--app-font);
+}
+
+.snippet {
+  margin: 0.5rem 0 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--app-radius);
+  background-color: var(--app-bg);
+  font-size: 0.8125rem;
+  font-family: var(--app-font-mono);
+  white-space: pre-wrap;
+}
+
+.result-title {
+  display: inline-flex;
+  gap: 0.6rem;
+  align-items: center;
+  min-width: 0;
+}
+
+.statement {
+  display: inline-block;
+  vertical-align: middle;
+  overflow: hidden;
+  max-width: 48rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.column-type {
+  color: var(--app-muted);
+  font-weight: 400;
+  font-size: 0.6875rem;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+td.null {
+  color: var(--app-muted);
+  font-style: italic;
+}
+
+.error {
+  margin: 0;
+}
+
+.truncated {
+  padding: 0.5rem 1.25rem;
+  color: var(--app-muted);
+  font-size: 0.8125rem;
+}
+
+.changes-switch {
+  display: inline-flex;
+  gap: 0.4rem;
+  align-items: center;
+  cursor: pointer;
+}
+
+.results-card ::ng-deep .ant-card-body:has(> nz-alert) {
+  padding: 1.25rem;
+}
+
+.results-card ::ng-deep .ant-card-body {
+  padding: 0;
+}

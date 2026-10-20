@@ -1,0 +1,325 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+// Shell (Tabler style), as in the SeaweedFS admin refresh: brand, page
+// search, navigation and status in the sidebar; a top bar on phones only.
+
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
+// Brand
+.app-brand-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  margin-right: 0.55rem;
+  border-radius: var(--app-radius);
+  background: linear-gradient(135deg, #80a8f3 0%, var(--app-primary) 100%);
+  color: #fff;
+  box-shadow: 0 4px 10px rgba(90, 141, 238, 0.35);
+  font-size: 1rem;
+}
+
+.app-brand,
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.app-brand {
+  color: var(--app-heading);
+  font-weight: 700;
+  font-size: 1.25rem;
+
+  &:hover {
+    color: var(--app-heading);
+  }
+}
+
+.sidebar-brand {
+  flex: 0 0 auto;
+  height: 3.75rem;
+  padding: 0 1rem;
+  color: var(--app-primary);
+  font-size: 1.15rem;
+
+  &:hover {
+    color: var(--app-primary);
+  }
+}
+
+.sidebar-brand-tag {
+  margin-left: 0.35rem;
+  padding: 0.1rem 0.35rem;
+  border-radius: 0.3rem;
+  background-color: rgba(90, 141, 238, 0.14);
+  color: var(--app-primary);
+  font-weight: 600;
+  font-size: 0.6rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+// Top bar (phones)
+.app-navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1030;
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  min-height: var(--navbar-height);
+  padding: 0 1rem;
+  border-bottom: 1px solid var(--app-border);
+  background-color: var(--app-surface);
+}
+
+// Sidebar
+.sidebar {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1031;
+  display: flex;
+  flex-direction: column;
+  width: var(--sidebar-width);
+  padding-bottom: 0;
+  border-right: 1px solid var(--app-border);
+  background-color: var(--app-menu-bg);
+}
+
+.sidebar-nav {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  min-height: 0;
+  padding-top: 0.25rem;
+}
+
+.sidebar-heading {
+  margin: 1rem 0 0.25rem;
+  padding-left: 1.3rem;
+  color: var(--app-muted);
+  font-weight: 400;
+  font-size: 0.7rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.nav {
+  list-style: none;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  margin: 0.0625rem 0.6rem;
+  padding: 0.45rem 0.7rem;
+  border-radius: 0.375rem;
+  color: var(--app-text);
+  font-weight: 400;
+  font-size: 0.875rem;
+  text-decoration: none;
+  transition: background-color 0.15s ease, color 0.15s ease;
+
+  i {
+    width: 1.25rem;
+    margin-right: 0.5rem;
+    color: inherit;
+    font-size: 1rem;
+    transition: color 0.15s ease;
+  }
+
+  &:hover {
+    background-color: var(--app-hover);
+    color: var(--app-primary);
+  }
+
+  &.active {
+    background-color: var(--app-menu-active);
+    color: var(--app-heading);
+    font-weight: 500;
+  }
+
+  &:hover i,
+  &.active i {
+    color: var(--app-primary);
+  }
+}
+
+// Footer: Flink version and connection state, messages and theme toggle
+.sidebar-footer {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 0.75rem;
+  border-top: 1px solid var(--app-border);
+}
+
+.sidebar-user {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  color: var(--app-heading);
+  cursor: default;
+}
+
+.app-user-avatar {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  margin-right: 0.6rem;
+  border-radius: 50%;
+  background-color: rgba(90, 141, 238, 0.14);
+  color: var(--app-primary);
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.sidebar-user-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.25;
+
+  small {
+    display: flex;
+    gap: 0.35rem;
+    align-items: center;
+    color: var(--app-muted);
+    font-size: 0.8125rem;
+
+    &.offline {
+      color: var(--app-danger);
+    }
+  }
+}
+
+.sidebar-user-name {
+  overflow: hidden;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sidebar-actions {
+  display: flex;
+  flex-shrink: 0;
+}
+
+.theme-toggle {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--app-heading);
+  font-size: 1.05rem;
+  cursor: pointer;
+
+  &:hover {
+    background-color: var(--app-hover);
+  }
+}
+
+// The messages button is only live when there are messages
+.theme-toggle:not(.has-count) .bi-bell {
+  color: var(--app-muted);
+}
+
+.theme-toggle-count {
+  position: absolute;
+  top: 0.15rem;
+  right: 0.1rem;
+  min-width: 1rem;
+  height: 1rem;
+  padding: 0 0.25rem;
+  border-radius: 0.5rem;
+  background-color: var(--app-danger);
+  color: #fff;
+  box-shadow: 0 0 0 2px var(--app-menu-bg);
+  font-weight: 600;
+  font-size: 0.65rem;
+  line-height: 1rem;
+}
+
+// Main content area
+.app-main {
+  min-width: 0;
+  margin-left: var(--sidebar-width);
+  padding: 1rem 1.5rem 1.5rem;
+}
+
+.sidebar-backdrop {
+  position: fixed;
+  z-index: 1040;
+  background-color: rgba(38, 60, 85, 0.4);
+  inset: var(--navbar-height) 0 0;
+}
+
+nz-alert {
+  display: block;
+  margin-bottom: 0.75rem;
+}
+
+// Phones: the sidebar becomes an overlay under the top bar
+@media (max-width: 767.98px) {
+  .app-navbar {
+    display: flex;
+  }
+
+  .sidebar {
+    top: var(--navbar-height);
+    z-index: 1050;
+    display: none;
+    width: 260px;
+
+    &.show {
+      display: flex;
+    }
+  }
+
+  .sidebar-brand {
+    display: none;
+  }
+
+  flink-quick-search {
+    margin-top: 0.75rem;
+  }
+
+  .app-main {
+    margin-left: 0;
+    padding: 1rem;
+  }
+}

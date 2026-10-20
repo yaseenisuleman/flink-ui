@@ -1,0 +1,170 @@
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements.  See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership.  The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License.  You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<flink-page-header pretitle="Jobs" title="Savepoints">
+  <button nz-button (click)="load()" [nzLoading]="loading">
+    <i class="bi bi-arrow-clockwise"></i>
+    Refresh
+  </button>
+</flink-page-header>
+
+<nz-card [nzBordered]="false" nzTitle="Dispose of a Savepoint" class="dispose-card">
+  <p class="tb-stat-text">
+    Deletes a savepoint's files and metadata, using the cluster's file system access. Use it for
+    savepoints you no longer need, including ones not listed below.
+  </p>
+  <form class="dispose-form" (ngSubmit)="dispose(disposePath, true)">
+    <input
+      nz-input
+      name="disposePath"
+      [(ngModel)]="disposePath"
+      placeholder="file:///opt/flink/data/savepoints/savepoint-..."
+    />
+    <button
+      nz-button
+      nzDanger
+      type="button"
+      [disabled]="!disposePath.trim()"
+      [nzLoading]="disposing.has(disposePath.trim())"
+      nz-popconfirm
+      nzPopconfirmTitle="Delete this savepoint's files? This can't be undone."
+      nzOkText="Dispose"
+      nzOkDanger
+      (nzOnConfirm)="dispose(disposePath, true)"
+    >
+      <i class="bi bi-trash"></i>
+      Dispose
+    </button>
+  </form>
+  <nz-alert
+    *ngIf="disposeResult"
+    class="dispose-result"
+    [nzType]="disposeResult.ok ? 'success' : 'error'"
+    nzShowIcon
+    [nzMessage]="disposeResult.ok ? 'Savepoint disposed' : 'Dispose failed'"
+    [nzDescription]="disposeResult.ok ? disposeResult.value : disposeResult.error"
+  ></nz-alert>
+</nz-card>
+
+<nz-card [nzBordered]="false" nzTitle="Known Savepoints" [nzLoading]="loading">
+  <nz-table
+    #table
+    nzSize="small"
+    [nzData]="savepoints"
+    [nzFrontPagination]="false"
+    [nzShowPagination]="false"
+    [nzNoResult]="empty"
+  >
+    <thead>
+      <tr>
+        <th>Path</th>
+        <th>Job</th>
+        <th nzWidth="170px">Taken</th>
+        <th nzWidth="110px">Known From</th>
+        <th nzWidth="150px"></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of table.data; trackBy: trackByPath" [class.disposed]="item.disposed">
+        <td>
+          <code class="path">{{ item.path }}</code>
+          <span *ngIf="item.disposed" class="tb-status disposed-badge">DISPOSED</span>
+        </td>
+        <td>
+          <a [routerLink]="['/job', 'running', item.jobId]">{{ item.jobName }}</a>
+          <div class="tb-sub mono">{{ item.jobId }}</div>
+        </td>
+        <td>{{ item.time | date: 'yyyy-MM-dd HH:mm:ss' }}</td>
+        <td>
+          <span
+            class="tb-status"
+            [style.--status-color]="item.source === 'browser' ? '#4263eb' : '#737373'"
+            nz-tooltip
+            [nzTooltipTitle]="
+              item.source === 'browser'
+                ? 'Triggered from this browser (kept in its local storage)'
+                : 'In the job\'s checkpoint history on the cluster'
+            "
+          >
+            {{ item.source === 'browser' ? 'BROWSER' : 'CLUSTER' }}
+          </span>
+        </td>
+        <td class="actions">
+          <button
+            nz-button
+            nzSize="small"
+            class="row-action"
+            nz-tooltip
+            [nzTooltipTitle]="copiedPath === item.path ? 'Copied' : 'Copy path'"
+            (click)="copy(item.path)"
+          >
+            <i
+              class="bi"
+              [class.bi-clipboard]="copiedPath !== item.path"
+              [class.bi-check2]="copiedPath === item.path"
+            ></i>
+          </button>
+          <a
+            *ngIf="!item.disposed"
+            nz-button
+            nzSize="small"
+            class="row-action"
+            nz-tooltip
+            nzTooltipTitle="Resume a job from it (Submit New Job)"
+            [routerLink]="['/submit']"
+            [queryParams]="{ savepointPath: item.path }"
+          >
+            <i class="bi bi-play"></i>
+          </a>
+          <button
+            *ngIf="!item.disposed"
+            nz-button
+            nzSize="small"
+            class="row-action danger"
+            nz-tooltip
+            nzTooltipTitle="Dispose (delete its files)"
+            [nzLoading]="disposing.has(item.path)"
+            nz-popconfirm
+            nzPopconfirmTitle="Delete this savepoint's files? This can't be undone."
+            nzOkText="Dispose"
+            nzOkDanger
+            (nzOnConfirm)="dispose(item.path)"
+          >
+            <i class="bi bi-trash"></i>
+          </button>
+          <button
+            *ngIf="item.source === 'browser'"
+            nz-button
+            nzSize="small"
+            class="row-action"
+            nz-tooltip
+            nzTooltipTitle="Remove from this list (keeps the files)"
+            (click)="forget(item.path)"
+          >
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+  <ng-template #empty>
+    <div class="tb-empty">
+      No savepoints yet. Trigger one from a running job's page (Savepoint or Stop).
+    </div>
+  </ng-template>
+</nz-card>

@@ -1,0 +1,106 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+:host {
+  float: left;
+  width: 33.33%;
+  margin-bottom: 0.75rem;
+  padding: 0.5rem;
+
+  &.big {
+    width: 100%;
+  }
+}
+
+.close {
+  margin-left: 0.5rem;
+}
+
+.chart {
+  position: relative;
+  border: 1px solid var(--app-border);
+  border-radius: var(--app-radius);
+  background-color: var(--app-surface);
+  box-shadow: var(--app-shadow);
+}
+
+.title {
+  position: relative;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--app-border);
+}
+
+.text {
+  overflow: hidden;
+  max-width: calc(~"100% - 128px");
+  color: var(--app-heading);
+  font-weight: 500;
+  font-size: 0.8125rem;
+  line-height: 1.5rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.operate {
+  position: absolute;
+  top: 0.75rem;
+  right: 1rem;
+  display: flex;
+  align-items: center;
+}
+
+.content {
+  padding: 0.75rem 1rem;
+
+  .numeric {
+    color: var(--app-heading);
+    font-weight: 600;
+    font-size: 2rem;
+    line-height: 150px;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+button {
+  transition: none;
+}
+
+// Segmented switches, as the SeaweedFS dashboard's .chart-switch
+.chart-switch {
+  ::ng-deep .ant-btn {
+    border-color: var(--app-border);
+    background-color: var(--app-surface);
+    color: var(--app-text);
+    font-size: 0.8125rem;
+
+    &:hover {
+      color: var(--app-primary);
+    }
+  }
+
+  ::ng-deep .ant-btn-primary,
+  ::ng-deep .ant-btn-primary:hover,
+  ::ng-deep .ant-btn-primary:focus {
+    position: relative;
+    z-index: 1;
+    border-color: rgba(var(--app-primary-rgb), 0.35);
+    background-color: rgba(var(--app-primary-rgb), 0.12);
+    color: var(--app-primary);
+  }
+}

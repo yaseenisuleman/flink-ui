@@ -1,0 +1,176 @@
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements.  See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership.  The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License.  You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<ng-container *ngIf="jobDetail && !isLoading">
+  <flink-page-header pretitle="Job" [title]="jobDetail.name" [live]="jobDetail.state === 'RUNNING'">
+    <a
+      pretitle
+      *ngIf="jobDetail['application-id']"
+      class="tb-back-link"
+      (click)="navigateToApplication()"
+    >
+      <i class="bi bi-arrow-left"></i>
+      Application
+    </a>
+    <flink-job-badge title [state]="jobDetail.state"></flink-job-badge>
+    <span *ngIf="statusTips" class="tb-stat-side">{{ statusTips }}</span>
+    <a
+      *ngIf="!isHistoryServer; else historyServerActions"
+      nz-button
+      [routerLink]="['/job-manager', 'logs']"
+      [queryParamsHandling]="'preserve'"
+    >
+      <i class="bi bi-journal-text"></i>
+      Job Manager Log
+    </a>
+    <ng-template #historyServerActions>
+      <a *ngIf="!urlLoading" nz-button [href]="jmLogUrl">
+        <i class="bi bi-journal-text"></i>
+        Job Manager Log
+      </a>
+    </ng-template>
+    <ng-container *ngIf="canOperate && !statusTips">
+      <button
+        *ngIf="jobDetail.plan.type === 'STREAMING'"
+        nz-button
+        nz-tooltip
+        nzTooltipTitle="Take a checkpoint now"
+        (click)="openOperation('checkpoint')"
+      >
+        <i class="bi bi-bookmark-check"></i>
+        Checkpoint
+      </button>
+      <button
+        nz-button
+        nz-tooltip
+        nzTooltipTitle="Write a savepoint to resume from later"
+        (click)="openOperation('savepoint')"
+      >
+        <i class="bi bi-floppy"></i>
+        Savepoint
+      </button>
+      <button
+        nz-button
+        nz-tooltip
+        nzTooltipTitle="Take a savepoint, then stop the job gracefully"
+        (click)="openOperation('stop')"
+      >
+        <i class="bi bi-stop-circle"></i>
+        Stop
+      </button>
+    </ng-container>
+    <ng-container *ngIf="!statusTips">
+      <button
+        *ngIf="
+          webCancelEnabled &&
+          (jobDetail.state === 'RUNNING' ||
+            jobDetail.state === 'CREATED' ||
+            jobDetail.state === 'RESTARTING')
+        "
+        nz-button
+        nzDanger
+        nz-popconfirm
+        nzPopconfirmTitle="Cancel Job?"
+        nzOkText="Yes"
+        nzCancelText="No"
+        (nzOnConfirm)="cancelJob()"
+      >
+        <i class="bi bi-x-circle"></i>
+        Cancel Job
+      </button>
+    </ng-container>
+  </flink-page-header>
+
+  <div class="tb-card-meta">
+    <span>
+      Job ID
+      <strong class="mono">{{ jobDetail.jid }}</strong>
+    </span>
+    <span *ngIf="jobDetail['application-id']">
+      Application ID
+      <strong class="mono">{{ jobDetail['application-id'] }}</strong>
+    </span>
+    <span *ngIf="jobDetail['job-type'] !== undefined">
+      Type
+      <strong>{{ jobDetail['job-type'] }}</strong>
+    </span>
+  </div>
+
+  <div class="tb-stat-row">
+    <div class="tb-card tb-stat">
+      <div class="subheader">Tasks</div>
+      <div class="tb-stat-value">
+        <flink-task-badge [tasks]="jobDetail['status-counts']"></flink-task-badge>
+      </div>
+      <div class="tb-stat-text">Subtask states across all vertices</div>
+    </div>
+    <div class="tb-card tb-stat">
+      <div class="subheader">Duration</div>
+      <div class="tb-stat-value">{{ jobDetail.duration | humanizeDuration }}</div>
+      <div class="tb-stat-text">
+        Started {{ jobDetail['start-time'] | date: 'yyyy-MM-dd HH:mm:ss' }}
+        <ng-container *ngIf="jobDetail['end-time'] > -1">
+          <br />
+          Ended {{ jobDetail['end-time'] | date: 'yyyy-MM-dd HH:mm:ss' }}
+        </ng-container>
+      </div>
+    </div>
+    <ng-container *ngIf="hasMetrics">
+      <div class="tb-card tb-stat">
+        <div class="subheader">Restarts</div>
+        <div class="tb-stat-value" [class.is-crit]="metrics.numRestarts > 0">
+          {{ metrics.numRestarts | number: '1.0-0' }}
+        </div>
+        <div class="tb-stat-text">
+          <ng-container *ngIf="metrics.numRestarts > 0; else noRestarts">
+            {{ metrics.restartingTime | humanizeDuration }} spent restarting
+          </ng-container>
+          <ng-template #noRestarts>No restarts since the job started</ng-template>
+        </div>
+      </div>
+      <div class="tb-card tb-stat" *ngIf="jobDetail.plan.type === 'STREAMING'">
+        <div class="subheader">Checkpoints</div>
+        <div class="tb-stat-value">
+          {{ metrics.numberOfCompletedCheckpoints | number: '1.0-0' }}
+          <span class="tb-stat-side" [class.is-warn]="metrics.numberOfFailedCheckpoints > 0">
+            {{ metrics.numberOfFailedCheckpoints | number: '1.0-0' }} failed
+          </span>
+        </div>
+        <div class="tb-stat-text">
+          <ng-container *ngIf="metrics.numberOfCompletedCheckpoints > 0; else noCheckpoints">
+            Last took {{ metrics.lastCheckpointDuration | humanizeDuration }},
+            {{ metrics.lastCheckpointSize | humanizeBytes }}
+          </ng-container>
+          <ng-template #noCheckpoints>None completed yet</ng-template>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+
+  <div class="tb-tabbar">
+    <flink-navigation [listOfNavigation]="listOfNavigation"></flink-navigation>
+  </div>
+</ng-container>
+<nz-skeleton [nzActive]="true" *ngIf="isLoading"></nz-skeleton>
+
+<flink-job-operation-modal
+  *ngIf="jobDetail"
+  [jobId]="jobDetail.jid"
+  [jobName]="jobDetail.name"
+  (finished)="onOperationFinished()"
+></flink-job-operation-modal>

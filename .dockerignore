@@ -1,0 +1,6 @@
+node_modules
+web
+.angular
+.eslintcache
+.git
+docker-compose.yml

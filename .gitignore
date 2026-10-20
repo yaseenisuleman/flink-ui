@@ -1,0 +1,7 @@
+node_modules/
+web/
+out-tsc/
+dist/
+.angular/
+.eslintcache
+npm-debug.log*

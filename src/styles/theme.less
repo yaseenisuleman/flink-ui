@@ -1,0 +1,38 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+// Imported by component stylesheets. The colour variables they use point at
+// the refresh's CSS variables (refresh/tokens.less), so components follow the
+// light/dark theme at runtime. Don't pass these through Less colour functions
+// (darken, fade...): use another token instead. The palette colours
+// (@primary-color, @success-color...) stay plain values from zorro-theme.less:
+// ng-zorro derives other variables from them, and they don't change with the theme.
+@import "zorro-theme";
+
+@component-background: var(--app-surface);
+@body-background: var(--app-bg);
+@border-color-base: var(--app-border);
+@border-color-split: var(--app-border);
+@text-color: var(--app-text);
+@text-color-secondary: var(--app-muted);
+@heading-color: var(--app-heading);
+@background-color-light: var(--app-hover);
+@link-color: var(--app-primary);
+@link-hover-color: var(--app-primary-dark);
+@select-item-selected-bg: var(--app-menu-active);
+@layout-header-background: var(--app-menu-bg);

@@ -1,0 +1,130 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+// Design tokens of the dashboard refresh (Tabler style). Everything else in
+// refresh/ and the component stylesheets colours itself from these, so the
+// dark theme only has to redefine them. The theme is set on <html> as
+// data-theme="light|dark" (index.html before first paint, then ThemeService).
+
+// Default UI scale. Every rem size scales the way browser zoom would, while
+// still honouring the user's own browser font-size preference.
+html {
+  font-size: 87.5%;
+}
+
+:root {
+  --sidebar-width: 14.125rem;
+  --navbar-height: 4rem;
+
+  // Palette (Tabler)
+  --app-primary: #066fd1;
+  --app-primary-rgb: 6, 111, 209;
+  --app-primary-dark: #0559a8;
+  --app-success: #2fb344;
+  --app-info: #4299e1;
+  --app-warning: #f76707;
+  --app-danger: #d63939;
+  --app-secondary: #737373;
+  --app-dark: #262626;
+  --app-success-rgb: 47, 179, 68;
+  --app-info-rgb: 66, 153, 225;
+  --app-warning-rgb: 247, 103, 7;
+  --app-danger-rgb: 214, 57, 57;
+  --app-secondary-rgb: 115, 115, 115;
+  --app-success-text: #238633;
+  --app-info-text: #2b7bc0;
+
+  // Surfaces and text
+  --app-bg: #fafafa;
+  --app-surface: #fff;
+  --app-menu-bg: #fff;
+  --app-menu-active: rgba(6, 111, 209, 0.07);
+  --app-border: #e6e7e9;
+  --app-heading: #171717;
+  --app-text: #404040;
+  --app-muted: #737373;
+  --app-hover: #f5f5f5;
+  --app-grid: #ededed;
+  --app-tooltip-bg: #283144;
+  --app-modal-mask: rgba(23, 23, 23, 0.32);
+  --app-font: system-ui, -apple-system, blinkmacsystemfont, "Segoe UI", roboto, "Helvetica Neue", sans-serif;
+  --app-font-mono: ui-monospace, sfmono-regular, menlo, consolas, "Liberation Mono", monospace;
+  --app-radius: 0.5rem;
+  --app-radius-sm: 0.375rem;
+  --app-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 1px 1px rgba(0, 0, 0, 0.02);
+  --app-shadow-popup: 0 6px 24px rgba(38, 60, 85, 0.14);
+}
+
+html[data-theme="dark"] {
+  --app-bg: #171717;
+  --app-surface: #212121;
+  --app-menu-bg: #1c1c1c;
+  --app-menu-active: rgba(66, 153, 225, 0.16);
+  --app-border: #333;
+  --app-heading: #f5f5f5;
+  --app-text: #d4d4d4;
+  --app-muted: #a3a3a3;
+  --app-hover: #2a2a2a;
+  --app-grid: #333;
+  --app-shadow: none;
+  --app-success-text: #5fd373;
+  --app-info-text: #6cb4ee;
+  --app-tooltip-bg: #0d111a;
+  --app-modal-mask: rgba(0, 0, 0, 0.6);
+
+  color-scheme: dark;
+}
+
+body {
+  background-color: var(--app-bg);
+  color: var(--app-text);
+  font-size: 0.875rem;
+  font-family: var(--app-font);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--app-heading);
+  font-weight: 500;
+  font-family: var(--app-font);
+}
+
+a {
+  color: var(--app-primary);
+}
+
+a:hover {
+  color: var(--app-primary-dark);
+}
+
+// Inline code (paths, IDs, class names): neutral chip, as in the SeaweedFS admin
+:not(pre) > code {
+  padding: 0.1rem 0.35rem;
+  border-radius: 0.25rem;
+  background-color: var(--app-hover);
+  color: var(--app-heading);
+  font-size: 0.8125rem;
+}
+
+pre {
+  color: var(--app-text);
+}

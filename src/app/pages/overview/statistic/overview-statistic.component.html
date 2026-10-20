@@ -1,0 +1,79 @@
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements.  See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership.  The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License.  You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<div class="tb-stat-row" *ngIf="statistic; else loading">
+  <div class="tb-card tb-stat">
+    <div class="subheader">Available Task Slots</div>
+    <div class="tb-stat-value">
+      {{ statistic['slots-available'] | number: '1.0-0' }}
+      <span class="tb-stat-side">of {{ statistic['slots-total'] | number: '1.0-0' }}</span>
+    </div>
+    <div class="tb-stat-text">
+      {{ slotsUsedPercent | number: '1.0-0' }}% in use
+      <ng-container *ngIf="statistic['slots-free-and-blocked']">
+        ·
+        <span class="warning">
+          {{ statistic['slots-free-and-blocked'] | number: '1.0-0' }} free but blocked
+        </span>
+      </ng-container>
+    </div>
+    <span class="tb-progress" [class.is-warn]="slotsUsedPercent >= 90">
+      <span [style.width.%]="slotsUsedPercent"></span>
+    </span>
+  </div>
+  <div class="tb-card tb-stat">
+    <div class="subheader">Task Managers</div>
+    <div class="tb-stat-value">{{ statistic['taskmanagers'] | number: '1.0-0' }}</div>
+    <div class="tb-stat-text">
+      <ng-container *ngIf="statistic['taskmanagers-blocked']; else allHealthy">
+        <span class="warning">
+          {{ statistic['taskmanagers-blocked'] | number: '1.0-0' }} blocked
+        </span>
+      </ng-container>
+      <ng-template #allHealthy>None blocked</ng-template>
+    </div>
+  </div>
+  <div class="tb-card tb-stat">
+    <div class="subheader">Running Applications</div>
+    <div class="tb-stat-value">
+      {{ statistic['applications-running'] | number: '1.0-0' }}
+      <span
+        *ngIf="statistic['applications-running']"
+        class="status-dot is-ok status-dot-animated"
+      ></span>
+    </div>
+    <div class="tb-stat-text">Currently running on the cluster</div>
+  </div>
+  <div class="tb-card tb-stat">
+    <div class="subheader">Finished Applications</div>
+    <div class="tb-stat-value">{{ statistic['applications-finished'] | number: '1.0-0' }}</div>
+    <div class="tb-stat-text">
+      {{ statistic['applications-cancelled'] | number: '1.0-0' }} canceled ·
+      <span [class.danger]="statistic['applications-failed']">
+        {{ statistic['applications-failed'] | number: '1.0-0' }} failed
+      </span>
+    </div>
+  </div>
+</div>
+<ng-template #loading>
+  <div class="tb-stat-row">
+    <div class="tb-card tb-stat" *ngFor="let i of [0, 1, 2, 3]">
+      <nz-skeleton [nzActive]="true" [nzTitle]="false" [nzParagraph]="{ rows: 3 }"></nz-skeleton>
+    </div>
+  </div>
+</ng-template>

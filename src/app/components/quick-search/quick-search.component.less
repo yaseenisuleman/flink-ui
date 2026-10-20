@@ -1,0 +1,133 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+:host {
+  display: block;
+  flex: 0 0 auto;
+  margin: 0 0.75rem 0.4rem;
+}
+
+.app-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  > i,
+  kbd {
+    position: absolute;
+    top: 50%;
+    line-height: 1;
+    transform: translateY(-50%);
+  }
+
+  > i {
+    left: 0.7rem;
+    color: var(--app-muted);
+    font-size: 0.8rem;
+
+    &::before {
+      display: block;
+    }
+  }
+
+  input {
+    width: 100%;
+    padding: 0.4rem 3.1rem 0.4rem 2rem;
+    border: 1px solid var(--app-border);
+    border-radius: var(--app-radius-sm);
+    background-color: var(--app-surface);
+    color: var(--app-heading);
+    outline: none;
+    font: inherit;
+    font-size: 0.8125rem;
+
+    &::placeholder {
+      color: var(--app-muted);
+    }
+
+    &::-webkit-search-cancel-button {
+      display: none;
+    }
+
+    &:focus {
+      border-color: rgba(var(--app-primary-rgb), 0.5);
+      box-shadow: 0 0 0 0.2rem rgba(var(--app-primary-rgb), 0.12);
+    }
+  }
+
+  kbd {
+    right: 0.45rem;
+    padding: 0.2rem 0.4rem;
+    border: 1px solid var(--app-border);
+    border-radius: 0.25rem;
+    background-color: var(--app-surface);
+    color: var(--app-muted);
+    font-size: 0.7rem;
+    font-family: var(--app-font);
+  }
+}
+
+.app-search-results {
+  position: absolute;
+  top: calc(100% + 0.4rem);
+  left: 0;
+  z-index: 1060;
+  width: 100%;
+  min-width: 16rem;
+  padding: 0.4rem;
+  border-radius: var(--app-radius);
+  background-color: var(--app-surface);
+  box-shadow: 0 8px 28px rgba(38, 60, 85, 0.2);
+}
+
+.app-search-item {
+  display: flex;
+  gap: 0.7rem;
+  align-items: center;
+  padding: 0.55rem 0.7rem;
+  border-radius: 0.3rem;
+  color: var(--app-heading);
+  text-decoration: none;
+
+  i {
+    width: 1.2rem;
+    color: var(--app-muted);
+  }
+
+  small {
+    margin-left: auto;
+    color: var(--app-muted);
+    font-size: 0.8125rem;
+  }
+
+  &:hover,
+  &.active {
+    background-color: var(--app-menu-active);
+    color: var(--app-primary);
+  }
+
+  &.active i {
+    color: var(--app-primary);
+  }
+}
+
+.app-search-empty {
+  padding: 0.8rem;
+  color: var(--app-muted);
+  font-size: 0.875rem;
+}

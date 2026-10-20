@@ -1,0 +1,128 @@
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements.  See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership.  The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License.  You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<!-- Top bar: small screens only; on desktop the sidebar carries brand, search and status -->
+<header class="app-navbar">
+  <a class="app-brand" [routerLink]="['/overview']" (click)="closeMenu()">
+    <span class="app-brand-icon"><i class="bi bi-lightning-charge"></i></span>
+    Flink
+  </a>
+  <button
+    type="button"
+    class="theme-toggle"
+    aria-label="Toggle navigation menu"
+    [attr.aria-expanded]="menuOpen"
+    (click)="toggleMenu()"
+  >
+    <i class="bi" [ngClass]="menuOpen ? 'bi-x-lg' : 'bi-list'"></i>
+  </button>
+</header>
+
+<aside class="sidebar" [class.show]="menuOpen">
+  <a class="sidebar-brand" [routerLink]="['/overview']">
+    <span class="app-brand-icon"><i class="bi bi-lightning-charge"></i></span>
+    Flink
+    <small class="sidebar-brand-tag">Dashboard</small>
+  </a>
+  <flink-quick-search [items]="searchItems" (navigated)="closeMenu()"></flink-quick-search>
+  <nav class="sidebar-nav">
+    <ng-container *ngFor="let section of sections; trackBy: trackByHeading">
+      <h6 class="sidebar-heading">{{ section.heading }}</h6>
+      <ul class="nav">
+        <li *ngFor="let item of section.items; trackBy: trackByLink">
+          <a
+            class="nav-link"
+            [routerLink]="[item.link]"
+            routerLinkActive="active"
+            (click)="closeMenu()"
+          >
+            <i class="bi" [ngClass]="item.icon"></i>
+            {{ item.label }}
+          </a>
+        </li>
+      </ul>
+    </ng-container>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="sidebar-user" [title]="'Flink ' + version + '\nCommit ' + revision">
+      <span class="app-user-avatar"><i class="bi bi-hdd-network"></i></span>
+      <span class="sidebar-user-text">
+        <span class="sidebar-user-name">Flink {{ version }}</span>
+        <small *ngIf="(online$ | async) !== false; else offline">
+          <span class="status-dot is-ok"></span>
+          Connected
+        </small>
+        <ng-template #offline>
+          <small class="offline">
+            <span class="status-dot is-crit status-dot-animated"></span>
+            Reconnecting…
+          </small>
+        </ng-template>
+      </span>
+    </div>
+    <div class="sidebar-actions">
+      <button
+        type="button"
+        class="theme-toggle"
+        title="Server messages"
+        aria-label="Server messages"
+        [class.has-count]="statusService.listOfErrorMessage.length"
+        (click)="showMessage()"
+      >
+        <i class="bi bi-bell"></i>
+        <span class="theme-toggle-count" *ngIf="statusService.listOfErrorMessage.length">
+          {{ statusService.listOfErrorMessage.length }}
+        </span>
+      </button>
+      <button
+        type="button"
+        class="theme-toggle"
+        title="Toggle dark mode"
+        aria-label="Toggle dark mode"
+        (click)="toggleTheme()"
+      >
+        <i class="bi" [ngClass]="theme === 'dark' ? 'bi-sun' : 'bi-moon'"></i>
+      </button>
+    </div>
+  </div>
+</aside>
+
+<!-- Backdrop behind the sidebar overlay on small screens -->
+<div class="sidebar-backdrop" *ngIf="menuOpen" (click)="closeMenu()"></div>
+
+<main class="app-main">
+  <router-outlet></router-outlet>
+</main>
+
+<nz-drawer
+  [nzVisible]="visible"
+  [nzWidth]="500"
+  nzPlacement="right"
+  nzTitle="Server Response Message List"
+  (nzOnClose)="clearMessage()"
+>
+  <ng-container *nzDrawerContent>
+    <nz-alert
+      *ngFor="let message of statusService.listOfErrorMessage"
+      [nzShowIcon]="true"
+      [nzType]="'info'"
+      [nzMessage]="'Server Response:'"
+      [nzDescription]="message"
+    ></nz-alert>
+  </ng-container>
+</nz-drawer>

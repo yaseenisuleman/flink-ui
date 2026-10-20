@@ -1,0 +1,151 @@
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements.  See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership.  The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License.  You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<div class="toolbar">
+  <span class="subheader">Subtask</span>
+  <nz-select
+    nzSize="small"
+    class="subtask-select"
+    [ngModel]="selected"
+    (ngModelChange)="select($event)"
+    nzShowSearch
+  >
+    <nz-option
+      *ngFor="let subtask of subtasks"
+      [nzValue]="subtask.subtask"
+      [nzLabel]="
+        '#' +
+        subtask.subtask +
+        ' · ' +
+        (subtask.attempt + 1) +
+        (subtask.attempt ? ' attempts' : ' attempt')
+      "
+    ></nz-option>
+  </nz-select>
+</div>
+
+<nz-table
+  nzSize="small"
+  [nzLoading]="loadingAttempts"
+  [nzData]="attempts"
+  [nzFrontPagination]="false"
+  [nzShowPagination]="false"
+>
+  <thead>
+    <tr>
+      <th nzWidth="80px">Attempt</th>
+      <th nzWidth="110px">Status</th>
+      <th>Host</th>
+      <th nzWidth="190px">Started</th>
+      <th nzWidth="120px">Duration</th>
+      <th nzWidth="80px"></th>
+    </tr>
+  </thead>
+  <tbody>
+    <ng-container *ngFor="let attempt of attempts; trackBy: trackByAttempt">
+      <tr>
+        <td>{{ attempt.attempt + 1 }}</td>
+        <td><flink-job-badge [state]="attempt.status"></flink-job-badge></td>
+        <td>
+          <div class="mono">{{ attempt.endpoint }}</div>
+          <a class="tb-sub" [routerLink]="['/task-manager', attempt['taskmanager-id'], 'metrics']">
+            {{ attempt['taskmanager-id'] }}
+          </a>
+        </td>
+        <td>{{ attempt['start-time'] | humanizeDate: 'yyyy-MM-dd HH:mm:ss.SSS' }}</td>
+        <td>{{ attempt.duration | humanizeDuration }}</td>
+        <td>
+          <a (click)="toggleAccumulators(attempt.attempt)">
+            {{ expanded.has(attempt.attempt) ? 'Less' : 'More' }}
+          </a>
+        </td>
+      </tr>
+      <tr *ngIf="expanded.has(attempt.attempt)" class="detail-row">
+        <td colspan="6">
+          <div class="detail-line">
+            <span class="subheader">Ended</span>
+            {{ attempt['end-time'] | humanizeDate: 'yyyy-MM-dd HH:mm:ss.SSS' }}
+          </div>
+          <div class="detail-line">
+            <span class="subheader">Time in state</span>
+            {{ statusDurations(attempt) || '-' }}
+          </div>
+          <div class="detail-line">
+            <span class="subheader">Accumulators</span>
+            <ng-container *ngIf="accumulators.has(attempt.attempt); else loading">
+              <ng-container
+                *ngIf="accumulators.get(attempt.attempt)?.['user-accumulators']?.length; else none"
+              >
+                <span
+                  class="accumulator"
+                  *ngFor="let item of accumulators.get(attempt.attempt)?.['user-accumulators']"
+                >
+                  {{ item.name }} =
+                  <span class="mono">{{ item.value }}</span>
+                  <span class="tb-sub">({{ item.type }})</span>
+                </span>
+              </ng-container>
+              <ng-template #none><span class="tb-sub">none in this attempt</span></ng-template>
+            </ng-container>
+            <ng-template #loading><span class="tb-sub">loading…</span></ng-template>
+          </div>
+        </td>
+      </tr>
+    </ng-container>
+  </tbody>
+</nz-table>
+
+<div class="metrics" *ngIf="selected !== null">
+  <div class="toolbar">
+    <span class="subheader">Metrics of subtask #{{ selected }}</span>
+    <input
+      nz-input
+      nzSize="small"
+      class="metric-filter"
+      placeholder="Filter metrics, e.g. numRecordsIn"
+      [(ngModel)]="metricFilter"
+      (ngModelChange)="filterMetrics()"
+    />
+    <span class="tb-sub">
+      {{ matchingMetrics }} of {{ metricNames.length }}
+      <ng-container *ngIf="matchingMetrics > metrics.length">
+        (showing {{ metrics.length }})
+      </ng-container>
+    </span>
+  </div>
+  <nz-table
+    nzSize="small"
+    [nzLoading]="loadingMetrics"
+    [nzData]="metrics"
+    [nzFrontPagination]="false"
+    [nzShowPagination]="false"
+  >
+    <thead>
+      <tr>
+        <th>Metric</th>
+        <th nzWidth="30%">Value</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let metric of metrics; trackBy: trackById">
+        <td>{{ metric.id }}</td>
+        <td class="mono">{{ metric.value }}</td>
+      </tr>
+    </tbody>
+  </nz-table>
+</div>

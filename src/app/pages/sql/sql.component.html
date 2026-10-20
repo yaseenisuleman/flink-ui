@@ -1,0 +1,269 @@
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements.  See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership.  The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License.  You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<flink-page-header pretitle="SQL Gateway" title="SQL Editor" [live]="!!gateway">
+  <span *ngIf="gateway" class="tb-stat-side">{{ gateway.productName }} {{ gateway.version }}</span>
+  <button
+    *ngIf="gateway"
+    nz-button
+    nz-tooltip
+    nzTooltipTitle="Close the session (and the tables and settings created in it) and start a new one"
+    (click)="resetSession()"
+  >
+    <i class="bi bi-arrow-repeat"></i>
+    Reset Session
+  </button>
+</flink-page-header>
+
+<!-- No gateway: explain how to deploy one -->
+<nz-card *ngIf="gateway === null" [nzBordered]="false" nzTitle="SQL Gateway not reachable">
+  <p class="tb-stat-text">
+    The SQL editor runs statements through the Flink SQL Gateway, a separate service. The dashboard
+    looks for it at
+    <code>./sql-gateway</code>
+    on its own host. The flink-ui container proxies that path to the gateway's REST port; point
+    <code>SQL_GATEWAY_URL</code>
+    at it (default
+    <code>http://sql-gateway:8083</code>
+    ).
+  </p>
+  <p class="tb-stat-text">Start one next to the JobManager with:</p>
+  <pre class="snippet">
+bin/sql-gateway.sh start-foreground \
+  -Dsql-gateway.endpoint.rest.address=0.0.0.0 \
+  -Drest.address=&lt;jobmanager-host&gt;</pre
+  >
+  <button nz-button (click)="checkGateway()">
+    <i class="bi bi-arrow-clockwise"></i>
+    Check Again
+  </button>
+</nz-card>
+
+<nz-card *ngIf="gateway === undefined" [nzBordered]="false" [nzLoading]="true"></nz-card>
+
+<ng-container *ngIf="gateway">
+  <nz-card
+    [nzBordered]="false"
+    class="editor-card"
+    [nzTitle]="editorTitle"
+    [nzExtra]="editorActions"
+  >
+    <div class="editor">
+      <nz-code-editor
+        [ngModel]="code"
+        (ngModelChange)="onCodeChange($event)"
+        [nzEditorOption]="editorOptions"
+        (nzEditorInitialized)="onEditorInitialized($event)"
+      ></nz-code-editor>
+    </div>
+  </nz-card>
+  <ng-template #editorTitle>
+    Statements
+    <span class="tb-stat-side hint">Runs the selection, or everything; statements end with ;</span>
+  </ng-template>
+  <ng-template #editorActions>
+    <div class="tb-page-actions">
+      <button *ngIf="running" nz-button nzDanger (click)="stop()">
+        <i class="bi bi-stop-fill"></i>
+        Stop
+      </button>
+      <button nz-button nzType="primary" [disabled]="running" (click)="run()">
+        <i class="bi bi-play-fill"></i>
+        Run
+        <kbd>Ctrl ↵</kbd>
+      </button>
+    </div>
+  </ng-template>
+
+  <nz-card
+    *ngIf="active"
+    [nzBordered]="false"
+    class="results-card"
+    [nzTitle]="resultTitle"
+    [nzExtra]="resultExtra"
+  >
+    <nz-alert
+      *ngIf="active.status === 'failed'"
+      class="error"
+      nzType="error"
+      nzShowIcon
+      nzMessage="Statement failed"
+      [nzDescription]="active.error"
+    ></nz-alert>
+
+    <ng-container *ngIf="active.status !== 'failed'">
+      <div class="tb-empty" *ngIf="!columns.length">
+        {{ active.status === 'running' ? 'Waiting for the first results…' : 'No results.' }}
+      </div>
+      <nz-table
+        *ngIf="columns.length && !showChanges"
+        nzSize="small"
+        [nzData]="rows"
+        [nzFrontPagination]="false"
+        [nzShowPagination]="false"
+        [nzScroll]="{ x: 'max-content', y: '420px' }"
+        [nzNoResult]="noRows"
+      >
+        <thead>
+          <tr>
+            <th *ngFor="let column of columns; trackBy: trackByIndex">
+              {{ column.name }}
+              <div class="column-type">{{ column.logicalType.type }}</div>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of rows; trackBy: trackByIndex">
+            <td *ngFor="let value of row; trackBy: trackByIndex" [class.null]="value === null">
+              {{ cell(value) }}
+            </td>
+          </tr>
+        </tbody>
+      </nz-table>
+      <nz-table
+        *ngIf="columns.length && showChanges"
+        nzSize="small"
+        [nzData]="changes"
+        [nzFrontPagination]="false"
+        [nzShowPagination]="false"
+        [nzScroll]="{ x: 'max-content', y: '420px' }"
+        [nzNoResult]="noRows"
+      >
+        <thead>
+          <tr>
+            <th nzWidth="60px">Op</th>
+            <th *ngFor="let column of columns; trackBy: trackByIndex">{{ column.name }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let change of changes; trackBy: trackByIndex">
+            <td>
+              <span
+                class="tb-status"
+                [style.--status-color]="
+                  change.kind === 'INSERT' || change.kind === 'UPDATE_AFTER' ? '#2fb344' : '#d63939'
+                "
+              >
+                {{ kindLabel(change.kind) }}
+              </span>
+            </td>
+            <td
+              *ngFor="let value of change.fields; trackBy: trackByIndex"
+              [class.null]="value === null"
+            >
+              {{ cell(value) }}
+            </td>
+          </tr>
+        </tbody>
+      </nz-table>
+      <ng-template #noRows><div class="tb-empty">No rows yet.</div></ng-template>
+      <div class="truncated" *ngIf="truncated">Showing the latest {{ rows.length }} rows.</div>
+    </ng-container>
+  </nz-card>
+  <ng-template #resultTitle>
+    <span class="result-title">
+      <span
+        class="tb-status"
+        [style.--status-color]="
+          active?.status === 'running'
+            ? '#066fd1'
+            : active?.status === 'finished'
+            ? '#2fb344'
+            : active?.status === 'failed'
+            ? '#d63939'
+            : '#737373'
+        "
+      >
+        {{ active?.status | uppercase }}
+      </span>
+      <code class="statement">{{ active?.statement }}</code>
+    </span>
+  </ng-template>
+  <ng-template #resultExtra>
+    <div class="tb-card-meta">
+      <span>
+        Rows
+        <strong>{{ rows.length }}</strong>
+      </span>
+      <span>
+        Time
+        <strong>{{ (active?.ended || now) - (active?.started || now) | humanizeDuration }}</strong>
+      </span>
+      <span *ngIf="active?.jobId">
+        Job
+        <a [routerLink]="['/job', 'running', active?.jobId]">{{ active?.jobId?.slice(0, 8) }}</a>
+      </span>
+      <label *ngIf="isQuery && columns.length" class="changes-switch">
+        <nz-switch nzSize="small" [(ngModel)]="showChanges"></nz-switch>
+        Changelog
+      </label>
+    </div>
+  </ng-template>
+
+  <nz-card *ngIf="history.length" [nzBordered]="false" nzTitle="History" [nzExtra]="historyExtra">
+    <nz-table
+      nzSize="small"
+      [nzData]="history"
+      [nzFrontPagination]="false"
+      [nzShowPagination]="false"
+    >
+      <thead>
+        <tr>
+          <th>Statement</th>
+          <th nzWidth="110px">Status</th>
+          <th nzWidth="80px">Rows</th>
+          <th nzWidth="110px">Time</th>
+          <th nzWidth="170px">Ran</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          *ngFor="let item of history; trackBy: trackByIndex"
+          class="clickable"
+          nz-tooltip
+          nzTooltipTitle="Put it back in the editor"
+          (click)="useStatement(item.statement)"
+        >
+          <td>
+            <code class="statement">{{ item.statement }}</code>
+          </td>
+          <td>
+            <span
+              class="tb-status"
+              [style.--status-color]="
+                item.status === 'finished'
+                  ? '#2fb344'
+                  : item.status === 'failed'
+                  ? '#d63939'
+                  : '#737373'
+              "
+            >
+              {{ item.status | uppercase }}
+            </span>
+          </td>
+          <td>{{ item.rows }}</td>
+          <td>{{ (item.ended || item.started) - item.started | humanizeDuration }}</td>
+          <td>{{ item.started | date: 'yyyy-MM-dd HH:mm:ss' }}</td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </nz-card>
+  <ng-template #historyExtra>
+    <button nz-button nzSize="small" (click)="clearHistory()">Clear</button>
+  </ng-template>
+</ng-container>

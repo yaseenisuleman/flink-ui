@@ -1,0 +1,13 @@
+[
+  {
+    "context": ["/sql-gateway"],
+    "target": "http://localhost:8083",
+    "pathRewrite": { "^/sql-gateway": "" },
+    "secure": false
+  },
+  {
+    "context": ["/"],
+    "target": "http://localhost:8081",
+    "secure": false
+  }
+]

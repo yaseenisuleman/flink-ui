@@ -1,0 +1,180 @@
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements.  See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership.  The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License.  You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<nz-modal
+  [nzVisible]="visible"
+  [nzTitle]="title"
+  [nzFooter]="footer"
+  [nzWidth]="560"
+  (nzOnCancel)="close()"
+>
+  <ng-container *nzModalContent>
+    <ng-container *ngIf="!result; else resultTemplate">
+      <p class="intro">
+        <ng-container *ngIf="mode === 'savepoint'">
+          Writes a savepoint of
+          <strong>{{ jobName }}</strong>
+          that a new run of the job can start from. The job keeps running unless you cancel it.
+        </ng-container>
+        <ng-container *ngIf="mode === 'stop'">
+          Takes a savepoint of
+          <strong>{{ jobName }}</strong>
+          and then stops it gracefully, so it can be resumed from that savepoint later.
+        </ng-container>
+        <ng-container *ngIf="mode === 'checkpoint'">
+          Takes a checkpoint of
+          <strong>{{ jobName }}</strong>
+          now, outside the periodic schedule.
+        </ng-container>
+      </p>
+
+      <form nz-form nzLayout="vertical" (ngSubmit)="run()">
+        <ng-container *ngIf="mode !== 'checkpoint'">
+          <nz-form-item>
+            <nz-form-label nzFor="target-directory">Target directory</nz-form-label>
+            <nz-form-control
+              [nzExtra]="
+                defaultDirectory
+                  ? 'Leave empty to use ' + defaultDirectory
+                  : 'The cluster has no default savepoint directory.'
+              "
+            >
+              <input
+                nz-input
+                id="target-directory"
+                name="targetDirectory"
+                [(ngModel)]="targetDirectory"
+                [disabled]="running"
+                [placeholder]="defaultDirectory || 'file:///path/to/savepoints'"
+              />
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-label>Format</nz-form-label>
+            <nz-form-control
+              nzExtra="Canonical is portable across state backends; native is faster for large state, but only works with the same state backend."
+            >
+              <nz-radio-group name="formatType" [(ngModel)]="formatType" [nzDisabled]="running">
+                <label nz-radio-button nzValue="CANONICAL">Canonical</label>
+                <label nz-radio-button nzValue="NATIVE">Native</label>
+              </nz-radio-group>
+            </nz-form-control>
+          </nz-form-item>
+          <label
+            *ngIf="mode === 'savepoint'"
+            nz-checkbox
+            name="cancelJob"
+            [(ngModel)]="cancelJob"
+            [nzDisabled]="running"
+          >
+            Cancel the job after the savepoint
+          </label>
+          <ng-container *ngIf="mode === 'stop'">
+            <label nz-checkbox name="drain" [(ngModel)]="drain" [nzDisabled]="running">
+              Drain the pipeline first
+            </label>
+            <div class="hint">
+              Emits MAX_WATERMARK before stopping, so event-time windows and timers fire. Use it
+              when the job will not be resumed; leave it off to resume later with no gap.
+            </div>
+          </ng-container>
+        </ng-container>
+
+        <nz-form-item *ngIf="mode === 'checkpoint'">
+          <nz-form-label>Checkpoint type</nz-form-label>
+          <nz-form-control
+            nzExtra="Configured uses the job's own checkpoint settings. Full writes all state; incremental only what changed (incremental state backends only)."
+          >
+            <nz-radio-group
+              name="checkpointType"
+              [(ngModel)]="checkpointType"
+              [nzDisabled]="running"
+            >
+              <label nz-radio-button nzValue="CONFIGURED">Configured</label>
+              <label nz-radio-button nzValue="FULL">Full</label>
+              <label nz-radio-button nzValue="INCREMENTAL">Incremental</label>
+            </nz-radio-group>
+          </nz-form-control>
+        </nz-form-item>
+      </form>
+
+      <div class="progress" *ngIf="running">
+        <nz-spin nzSimple nzSize="small"></nz-spin>
+        <span>
+          In progress. Large state can take a while; you can close this dialog and you'll be
+          notified when it finishes.
+        </span>
+      </div>
+    </ng-container>
+
+    <ng-template #resultTemplate>
+      <ng-container *ngIf="result?.ok; else failed">
+        <div class="result">
+          <i class="bi bi-check-circle-fill ok"></i>
+          <div>
+            <div class="result-title">
+              {{
+                mode === 'checkpoint'
+                  ? 'Checkpoint ' + result?.value + ' completed'
+                  : 'Savepoint completed'
+              }}
+            </div>
+            <ng-container *ngIf="mode !== 'checkpoint'">
+              <div class="path-row">
+                <code class="path">{{ result?.value }}</code>
+                <button nz-button nzSize="small" type="button" (click)="copy(result?.value || '')">
+                  <i class="bi" [class.bi-clipboard]="!copied" [class.bi-check2]="copied"></i>
+                  {{ copied ? 'Copied' : 'Copy' }}
+                </button>
+              </div>
+              <div class="hint">
+                Listed under Savepoints. To resume, submit the job with this path as its savepoint
+                path.
+              </div>
+            </ng-container>
+          </div>
+        </div>
+      </ng-container>
+      <ng-template #failed>
+        <nz-alert
+          nzType="error"
+          nzShowIcon
+          [nzMessage]="title + ' failed'"
+          [nzDescription]="result?.error"
+        ></nz-alert>
+      </ng-template>
+    </ng-template>
+  </ng-container>
+</nz-modal>
+
+<ng-template #footer>
+  <button nz-button type="button" (click)="close()">
+    {{ result || running ? 'Close' : 'Cancel' }}
+  </button>
+  <button
+    *ngIf="!result"
+    nz-button
+    type="button"
+    nzType="primary"
+    [nzDanger]="mode === 'stop'"
+    [nzLoading]="running"
+    (click)="run()"
+  >
+    {{ action }}
+  </button>
+</ng-template>

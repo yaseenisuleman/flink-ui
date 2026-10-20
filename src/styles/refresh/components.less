@@ -1,0 +1,303 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+// Page building blocks shared by every page: page header, stat cards,
+// status dots and meters. The same markup and classes as the SeaweedFS
+// admin refresh, so both dashboards read as one system.
+
+.num {
+  font-variant-numeric: tabular-nums;
+}
+
+.mono {
+  font-size: 0.8125rem;
+  font-family: var(--app-font-mono);
+}
+
+.text-muted {
+  color: var(--app-muted);
+}
+
+// Page header: pretitle, title and actions on one row
+.tb-page-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0.25rem 0 1.25rem;
+}
+
+.tb-pretitle {
+  display: flex;
+  gap: 0.35rem;
+  align-items: center;
+  color: var(--app-muted);
+  font-weight: 500;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.tb-page-title {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  margin: 0.15rem 0 0;
+  color: var(--app-heading);
+  font-weight: 600;
+  font-size: 1.25rem;
+  overflow-wrap: anywhere;
+}
+
+.tb-back-link {
+  display: inline-flex;
+  gap: 0.25rem;
+  align-items: center;
+  margin-right: 0.5rem;
+  color: var(--app-primary);
+  letter-spacing: 0;
+  text-transform: none;
+  cursor: pointer;
+
+  &:hover {
+    color: var(--app-primary-dark);
+  }
+}
+
+.tb-page-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+// Card surface for blocks that aren't nz-card (stat cards, tabbed content)
+.tb-card {
+  border: 1px solid var(--app-border);
+  border-radius: var(--app-radius);
+  background-color: var(--app-surface);
+  box-shadow: var(--app-shadow);
+}
+
+// Detail pages: the tab bar is the top of the card that holds the tab's content
+.tb-tabbar {
+  padding: 0 1.25rem;
+  border: 1px solid var(--app-border);
+  border-bottom: 0;
+  border-radius: var(--app-radius) var(--app-radius) 0 0;
+  background-color: var(--app-surface);
+
+  .ant-tabs-top > .ant-tabs-nav {
+    margin-bottom: 0;
+  }
+}
+
+.tb-tabbed-body {
+  overflow: hidden;
+  border: 1px solid var(--app-border);
+  border-radius: 0 0 var(--app-radius) var(--app-radius);
+  background-color: var(--app-surface);
+  box-shadow: var(--app-shadow);
+}
+
+// Row of stat cards: same gutter and spacing as the SeaweedFS dashboard
+.tb-stat-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.tb-stat {
+  overflow: hidden;
+  min-width: 0;
+  padding: 1.25rem;
+
+  .tb-stat-value {
+    overflow-wrap: anywhere;
+  }
+}
+
+// Status label: a soft tint of the status colour, as the SeaweedFS badges.
+// The colour comes from --status-color (ConfigService.COLOR_MAP).
+.tb-status {
+  --status-text: color-mix(in srgb, var(--status-color) 82%, #000);
+
+  display: inline-block;
+  min-width: 1.75rem;
+  padding: 0.1rem 0.45rem;
+  border-radius: var(--app-radius-sm);
+  background-color: color-mix(in srgb, var(--status-color, var(--app-secondary)) 14%, transparent);
+  color: var(--status-text, var(--app-text));
+  font-weight: 500;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  text-align: center;
+  white-space: nowrap;
+  cursor: default;
+  font-variant-numeric: tabular-nums;
+}
+
+html[data-theme="dark"] .tb-status {
+  --status-text: color-mix(in srgb, var(--status-color) 70%, #fff);
+
+  background-color: color-mix(in srgb, var(--status-color, var(--app-secondary)) 22%, transparent);
+}
+
+// Badge groups (task counts per status)
+.tb-status-group {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+// Label above a value (stat cards, detail blocks)
+.subheader {
+  color: var(--app-muted);
+  font-weight: 500;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+// Stat cards
+.tb-stat-value {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: baseline;
+  margin: 0.25rem 0 0.5rem;
+  color: var(--app-heading);
+  font-weight: 600;
+  font-size: 1.5rem;
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+}
+
+.tb-stat-text {
+  color: var(--app-text);
+  font-size: 0.8125rem;
+}
+
+.tb-stat-side {
+  color: var(--app-muted);
+  font-size: 0.8125rem;
+}
+
+.tb-card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1.25rem;
+  color: var(--app-muted);
+  font-size: 0.8125rem;
+
+  strong {
+    margin-left: 0.2rem;
+    color: var(--app-heading);
+    font-weight: 600;
+  }
+}
+
+.tb-empty {
+  padding: 1.5rem 0;
+  color: var(--app-muted);
+  text-align: center;
+}
+
+// Thin meter
+.tb-progress {
+  display: block;
+  overflow: hidden;
+  height: 4px;
+  margin-top: 0.4rem;
+  border-radius: 2px;
+  background-color: var(--app-grid);
+
+  > span {
+    display: block;
+    height: 100%;
+    border-radius: 2px;
+    background-color: var(--app-primary);
+  }
+
+  &.is-warn > span {
+    background-color: var(--app-warning);
+  }
+
+  &.is-crit > span {
+    background-color: var(--app-danger);
+  }
+}
+
+// Status dots
+.status-dot {
+  position: relative;
+  display: inline-block;
+  vertical-align: middle;
+  flex-shrink: 0;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background-color: var(--app-muted);
+
+  &.is-ok {
+    background-color: var(--app-success);
+  }
+
+  &.is-warn {
+    background-color: var(--app-warning);
+  }
+
+  &.is-crit {
+    background-color: var(--app-danger);
+  }
+
+  &.is-info {
+    background-color: var(--app-primary);
+  }
+}
+
+.status-dot-animated::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  background-color: inherit;
+  animation: live-pulse 2s ease-out infinite;
+  inset: 0;
+}
+
+@keyframes live-pulse {
+  from {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(3);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .status-dot-animated::after {
+    animation: none;
+  }
+}

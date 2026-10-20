@@ -1,0 +1,87 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+:host {
+  display: block;
+}
+
+nz-card {
+  display: block;
+  margin-bottom: 1rem;
+}
+
+.dispose-form {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+
+  input {
+    flex: 1;
+  }
+}
+
+.dispose-result {
+  margin-top: 0.75rem;
+}
+
+.path {
+  overflow-wrap: anywhere;
+}
+
+.tb-sub {
+  color: var(--app-muted);
+  font-size: 0.75rem;
+}
+
+.disposed {
+  opacity: 0.55;
+}
+
+.disposed-badge {
+  --status-color: var(--app-danger);
+
+  margin-left: 0.5rem;
+}
+
+.actions {
+  text-align: right;
+  white-space: nowrap;
+}
+
+// Row actions: one neutral square icon button, the icon carrying the colour
+.row-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2rem;
+  height: 2rem;
+  margin-left: 0.25rem;
+  padding: 0 0.5rem;
+
+  &:hover,
+  &:focus {
+    border-color: var(--app-border);
+    background-color: var(--app-hover);
+  }
+
+  &.danger,
+  &.danger:hover,
+  &.danger:focus {
+    color: var(--app-danger);
+  }
+}

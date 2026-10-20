@@ -1,0 +1,95 @@
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements.  See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership.  The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License.  You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<ng-container *ngIf="!loading; else loadingContent">
+  <ng-container *ngIf="taskManagerDetail">
+    <flink-page-header
+      pretitle="Task Manager"
+      [title]="taskManagerDetail.id"
+      [live]="!taskManagerDetail.blocked"
+    >
+      <a pretitle class="tb-back-link" [routerLink]="['/task-manager']">
+        <i class="bi bi-arrow-left"></i>
+        Task Managers
+      </a>
+      <flink-blocked-badge title *ngIf="taskManagerDetail.blocked"></flink-blocked-badge>
+    </flink-page-header>
+
+    <div class="tb-card-meta">
+      <span>
+        Path
+        <strong class="mono">{{ taskManagerDetail.path }}</strong>
+      </span>
+      <span>
+        Data Port
+        <strong>{{ taskManagerDetail.dataPort }}</strong>
+      </span>
+      <span>
+        Last Heartbeat
+        <strong>
+          {{ taskManagerDetail.timeSinceLastHeartbeat | date: 'yyyy-MM-dd HH:mm:ss' }}
+        </strong>
+      </span>
+    </div>
+
+    <div class="tb-stat-row">
+      <div class="tb-card tb-stat">
+        <div class="subheader">Free Slots</div>
+        <div class="tb-stat-value">
+          {{ taskManagerDetail.freeSlots }}
+          <span class="tb-stat-side">of {{ taskManagerDetail.slotsNumber }}</span>
+        </div>
+        <div class="tb-stat-text">{{ taskManagerDetail.assignedTasks }} assigned tasks</div>
+        <span class="tb-progress">
+          <span [style.width.%]="slotsUsedPercent"></span>
+        </span>
+      </div>
+      <div class="tb-card tb-stat">
+        <div class="subheader">CPU Cores</div>
+        <div class="tb-stat-value">{{ taskManagerDetail.hardware.cpuCores }}</div>
+        <div class="tb-stat-text">Available to the JVM</div>
+      </div>
+      <div class="tb-card tb-stat">
+        <div class="subheader">Physical Memory</div>
+        <div class="tb-stat-value">
+          {{ taskManagerDetail.hardware.physicalMemory | humanizeBytes }}
+        </div>
+        <div class="tb-stat-text">On the host</div>
+      </div>
+      <div class="tb-card tb-stat">
+        <div class="subheader">JVM Heap Size</div>
+        <div class="tb-stat-value">{{ taskManagerDetail.hardware.freeMemory | humanizeBytes }}</div>
+        <div class="tb-stat-text">Maximum heap</div>
+      </div>
+      <div class="tb-card tb-stat">
+        <div class="subheader">Flink Managed Memory</div>
+        <div class="tb-stat-value">
+          {{ taskManagerDetail.hardware.managedMemory | humanizeBytes }}
+        </div>
+        <div class="tb-stat-text">Off-heap, managed by Flink</div>
+      </div>
+    </div>
+  </ng-container>
+  <div class="tb-tabbar">
+    <flink-navigation [listOfNavigation]="listOfNavigation"></flink-navigation>
+  </div>
+</ng-container>
+
+<ng-template #loadingContent>
+  <nz-skeleton [nzActive]="true" [nzTitle]="false" [nzParagraph]="{ rows: 6 }"></nz-skeleton>
+</ng-template>

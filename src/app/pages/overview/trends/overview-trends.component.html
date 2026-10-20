@@ -1,0 +1,79 @@
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements.  See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership.  The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License.  You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<div class="tb-stat-row" *ngIf="hasData">
+  <div class="tb-card tb-stat chart-stat">
+    <div class="subheader">TaskManager CPU</div>
+    <div class="tb-stat-value">
+      {{ cpu.latest | number: '1.0-1' }}%
+      <span class="tb-stat-side" *ngIf="cpuMax !== undefined">
+        max {{ cpuMax | number: '1.0-1' }}%
+      </span>
+    </div>
+    <div class="tb-stat-text">Average JVM CPU load across TaskManagers</div>
+    <flink-sparkline
+      [data]="cpu.points"
+      [min]="0"
+      [format]="percent"
+      color="#066fd1"
+    ></flink-sparkline>
+  </div>
+  <div class="tb-card tb-stat chart-stat">
+    <div class="subheader">Heap Used</div>
+    <div class="tb-stat-value">
+      {{ heap.latest || 0 | humanizeBytes }}
+      <span class="tb-stat-side" *ngIf="heapMax">of {{ heapMax | humanizeBytes }}</span>
+    </div>
+    <div class="tb-stat-text">JVM heap, all TaskManagers together</div>
+    <flink-sparkline
+      [data]="heap.points"
+      [min]="0"
+      [max]="heapMax"
+      [format]="bytes"
+      color="#ae3ec9"
+    ></flink-sparkline>
+  </div>
+  <div class="tb-card tb-stat chart-stat">
+    <div class="subheader">Managed Memory</div>
+    <div class="tb-stat-value">
+      {{ managed.latest || 0 | humanizeBytes }}
+      <span class="tb-stat-side" *ngIf="managedTotal">of {{ managedTotal | humanizeBytes }}</span>
+    </div>
+    <div class="tb-stat-text">Used by state backends, sorting and batch operators</div>
+    <flink-sparkline
+      [data]="managed.points"
+      [min]="0"
+      [max]="managedTotal"
+      [format]="bytes"
+      color="#17a2b8"
+    ></flink-sparkline>
+  </div>
+  <div class="tb-card tb-stat chart-stat">
+    <div class="subheader">Job Restarts</div>
+    <div class="tb-stat-value" [class.is-crit]="(restarts.latest || 0) > 0">
+      {{ restarts.latest || 0 | number: '1.0-0' }}
+    </div>
+    <div class="tb-stat-text">Total restarts of the jobs on the cluster</div>
+    <flink-sparkline
+      [data]="restarts.points"
+      [min]="0"
+      [format]="count"
+      color="#d63939"
+    ></flink-sparkline>
+  </div>
+</div>

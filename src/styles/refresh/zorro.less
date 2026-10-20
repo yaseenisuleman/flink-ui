@@ -1,0 +1,1056 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+// ng-zorro components drawn in the refresh style. ng-zorro's stylesheet is
+// compiled with fixed light colours; these rules repaint the components the
+// dashboard uses from the tokens, so they follow the light/dark theme. Markup
+// is unchanged; only ng-zorro's own classes are restyled.
+
+// Text colour of every component root (ng-zorro sets a fixed rgba black)
+.ant-card,
+.ant-table,
+.ant-tabs,
+.ant-descriptions,
+.ant-select,
+.ant-form,
+.ant-form-item,
+.ant-radio-wrapper,
+.ant-checkbox-wrapper,
+.ant-collapse,
+.ant-alert,
+.ant-dropdown,
+.ant-pagination,
+.ant-breadcrumb,
+.ant-slider,
+.ant-badge,
+.ant-progress,
+.ant-divider,
+.ant-upload,
+.ant-modal,
+.ant-popover,
+.ant-typography,
+.ant-list,
+.ant-empty {
+  color: var(--app-text);
+}
+
+// ---------------------------------------------------------------
+// Cards
+// ---------------------------------------------------------------
+.ant-card {
+  border: 1px solid var(--app-border);
+  border-radius: var(--app-radius);
+  background-color: var(--app-surface);
+  box-shadow: var(--app-shadow);
+}
+
+.ant-card-bordered {
+  border-color: var(--app-border);
+}
+
+.ant-card-head {
+  min-height: 3.25rem;
+  padding: 0 1.25rem;
+  border-bottom: 1px solid var(--app-border);
+  color: var(--app-heading);
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+.ant-card-head-title,
+.ant-card-extra {
+  padding: 0.9rem 0;
+}
+
+.ant-card-extra {
+  color: var(--app-text);
+}
+
+.ant-card-body {
+  padding: 1.25rem;
+}
+
+// A table straight in a card runs edge to edge, as in the SeaweedFS admin
+.ant-card-body:has(> nz-table:only-child) {
+  padding: 0;
+}
+
+.ant-card-type-inner .ant-card-head {
+  background-color: var(--app-surface);
+}
+
+// ---------------------------------------------------------------
+// Tables
+// ---------------------------------------------------------------
+.ant-table {
+  background-color: var(--app-surface);
+  font-size: 0.875rem;
+}
+
+.ant-table-thead > tr > th,
+.ant-table.ant-table-small .ant-table-thead > tr > th {
+  padding: 0.55rem 0.75rem;
+  border-bottom: 1px solid var(--app-border);
+  background-color: var(--app-bg);
+  color: var(--app-muted);
+  font-weight: 500;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+// Header labels break between words only (rewrite.less lets cells break
+// anywhere, which splits the wider uppercase labels mid-word)
+.ant-table-thead > tr > th {
+  word-break: normal;
+  overflow-wrap: normal;
+}
+
+// No column separators in the header row
+.ant-table-thead > tr > th::before {
+  display: none;
+}
+
+.ant-table-tbody > tr > td {
+  vertical-align: middle;
+  padding: 0.65rem 0.75rem;
+  border-bottom: 1px solid var(--app-border);
+}
+
+.ant-table-small .ant-table-tbody > tr > td,
+.ant-table.ant-table-small .ant-table-tbody > tr > td {
+  padding: 0.4rem 0.75rem;
+}
+
+.ant-table .ant-table-thead > tr > th:first-child,
+.ant-table .ant-table-tbody > tr > td:first-child,
+.ant-table.ant-table-small .ant-table-thead > tr > th:first-child,
+.ant-table.ant-table-small .ant-table-tbody > tr > td:first-child {
+  padding-left: 1.25rem;
+}
+
+.ant-table .ant-table-thead > tr > th:last-child,
+.ant-table .ant-table-tbody > tr > td:last-child,
+.ant-table.ant-table-small .ant-table-thead > tr > th:last-child,
+.ant-table.ant-table-small .ant-table-tbody > tr > td:last-child {
+  padding-right: 1.25rem;
+}
+
+.ant-table-tbody > tr:last-child > td {
+  border-bottom: 0;
+}
+
+.ant-table-tbody > tr.ant-table-row:hover > td,
+.ant-table-tbody > tr > td.ant-table-cell-row-hover {
+  background-color: var(--app-hover);
+}
+
+.ant-table-thead th.ant-table-column-has-sorters:hover {
+  background-color: var(--app-hover);
+}
+
+// The sorted column is marked by its arrow only, not a filled header
+.ant-table-thead th.ant-table-column-sort,
+.ant-table.ant-table-small .ant-table-thead > tr > th.ant-table-column-sort {
+  background-color: var(--app-bg);
+}
+
+td.ant-table-column-sort {
+  background-color: transparent;
+}
+
+.ant-table-column-sorter {
+  color: var(--app-muted);
+}
+
+.ant-table-column-sorter-up.active,
+.ant-table-column-sorter-down.active,
+.ant-table-filter-trigger.active {
+  color: var(--app-primary);
+}
+
+.ant-table-filter-trigger:hover {
+  background-color: var(--app-hover);
+  color: var(--app-heading);
+}
+
+.ant-table-tbody > tr.ant-table-placeholder > td,
+.ant-table-tbody > tr.ant-table-placeholder:hover > td {
+  background-color: var(--app-surface);
+}
+
+.ant-table-tbody > tr.ant-table-expanded-row > td,
+.ant-table-tbody > tr.ant-table-expanded-row:hover > td {
+  background-color: var(--app-bg);
+}
+
+.ant-table-row-expand-icon {
+  border-color: var(--app-border);
+  background-color: var(--app-surface);
+  color: var(--app-text);
+}
+
+.ant-table-cell-fix-left,
+.ant-table-cell-fix-right {
+  background-color: var(--app-surface);
+}
+
+.ant-table-thead > tr > th.ant-table-cell-fix-left,
+.ant-table-thead > tr > th.ant-table-cell-fix-right {
+  background-color: var(--app-bg);
+}
+
+// ng-zorro's bordered-table selectors are long; match them with !important
+.ant-table.ant-table-bordered > .ant-table-container,
+.ant-table.ant-table-bordered > .ant-table-title,
+.ant-table.ant-table-bordered > .ant-table-footer,
+.ant-table.ant-table-bordered table,
+.ant-table.ant-table-bordered th,
+.ant-table.ant-table-bordered td {
+  border-color: var(--app-border) !important;
+}
+
+.ant-table-title,
+.ant-table-footer {
+  background-color: var(--app-bg);
+  color: var(--app-text);
+}
+
+.ant-table-filter-dropdown {
+  border-radius: var(--app-radius);
+  background-color: var(--app-surface);
+  box-shadow: var(--app-shadow-popup);
+}
+
+.ant-table-filter-dropdown-btns {
+  border-top-color: var(--app-border);
+}
+
+// ---------------------------------------------------------------
+// Tabs: underline style
+// ---------------------------------------------------------------
+.ant-tabs-top > .ant-tabs-nav::before,
+.ant-tabs-bottom > .ant-tabs-nav::before {
+  border-bottom-color: var(--app-border);
+}
+
+.ant-tabs-tab {
+  color: var(--app-text);
+  font-weight: 400;
+}
+
+.ant-tabs-tab:hover {
+  color: var(--app-heading);
+}
+
+.ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: var(--app-primary);
+}
+
+.ant-tabs-ink-bar {
+  background-color: var(--app-primary);
+}
+
+.ant-tabs-card > .ant-tabs-nav .ant-tabs-tab {
+  border-color: var(--app-border);
+  background-color: var(--app-bg);
+}
+
+.ant-tabs-card > .ant-tabs-nav .ant-tabs-tab-active {
+  background-color: var(--app-surface);
+}
+
+.ant-tabs-dropdown-menu {
+  background-color: var(--app-surface);
+}
+
+.ant-tabs-dropdown-menu-item {
+  color: var(--app-text);
+}
+
+.ant-tabs-dropdown-menu-item:hover {
+  background-color: var(--app-hover);
+}
+
+// ---------------------------------------------------------------
+// Descriptions: label column in the table header style
+// ---------------------------------------------------------------
+.ant-descriptions-title {
+  color: var(--app-heading);
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+.ant-descriptions-item-label {
+  color: var(--app-muted);
+}
+
+.ant-descriptions-item-content {
+  color: var(--app-heading);
+}
+
+.ant-descriptions-bordered .ant-descriptions-view {
+  border-color: var(--app-border);
+  border-radius: var(--app-radius);
+}
+
+.ant-descriptions-bordered .ant-descriptions-row {
+  border-bottom-color: var(--app-border);
+}
+
+.ant-descriptions-bordered .ant-descriptions-item-label,
+.ant-descriptions-bordered .ant-descriptions-item-content {
+  border-right-color: var(--app-border);
+}
+
+.ant-descriptions-bordered .ant-descriptions-item-label {
+  background-color: var(--app-bg);
+  font-weight: 500;
+}
+
+// ---------------------------------------------------------------
+// Buttons: primary is solid; default is the neutral bordered button
+// ---------------------------------------------------------------
+.ant-btn {
+  border-color: var(--app-border);
+  border-radius: var(--app-radius-sm);
+  background-color: var(--app-surface);
+  color: var(--app-heading);
+  box-shadow: none;
+  text-shadow: none;
+}
+
+.ant-btn:hover,
+.ant-btn:focus {
+  border-color: var(--app-primary);
+  background-color: var(--app-surface);
+  color: var(--app-primary);
+}
+
+.ant-btn:active {
+  border-color: var(--app-primary);
+  background-color: var(--app-hover);
+  color: var(--app-primary);
+}
+
+.ant-btn-primary {
+  border-color: var(--app-primary);
+  background-color: var(--app-primary);
+  color: #fff;
+}
+
+.ant-btn-primary:hover,
+.ant-btn-primary:focus,
+.ant-btn-primary:active {
+  border-color: var(--app-primary-dark);
+  background-color: var(--app-primary-dark);
+  color: #fff;
+}
+
+.ant-btn-dangerous {
+  border-color: rgba(var(--app-danger-rgb), 0.5);
+  color: var(--app-danger);
+}
+
+.ant-btn-dangerous:hover,
+.ant-btn-dangerous:focus,
+.ant-btn-dangerous.ant-btn-primary {
+  border-color: var(--app-danger);
+  background-color: var(--app-danger);
+  color: #fff;
+}
+
+.ant-btn-dangerous.ant-btn-primary:hover,
+.ant-btn-dangerous.ant-btn-primary:focus {
+  border-color: #b92f2f;
+  background-color: #b92f2f;
+}
+
+.ant-btn-link,
+.ant-btn-text,
+.ant-btn-link:hover,
+.ant-btn-link:focus,
+.ant-btn-text:hover,
+.ant-btn-text:focus {
+  border-color: transparent;
+  background-color: transparent;
+}
+
+.ant-btn-link {
+  color: var(--app-primary);
+}
+
+.ant-btn-link:hover,
+.ant-btn-link:focus {
+  color: var(--app-primary-dark);
+}
+
+.ant-btn-text {
+  color: var(--app-text);
+}
+
+.ant-btn-text:hover,
+.ant-btn-text:focus {
+  background-color: var(--app-hover);
+  color: var(--app-heading);
+}
+
+.ant-btn[disabled],
+.ant-btn[disabled]:hover,
+.ant-btn[disabled]:focus,
+.ant-btn[disabled]:active {
+  border-color: var(--app-border);
+  background-color: var(--app-hover);
+  color: var(--app-muted);
+}
+
+// ---------------------------------------------------------------
+// Form controls
+// ---------------------------------------------------------------
+.ant-input,
+.ant-input-affix-wrapper,
+.ant-input-number,
+.ant-picker,
+.ant-select:not(.ant-select-customize-input) .ant-select-selector {
+  border-color: var(--app-border);
+  border-radius: var(--app-radius-sm);
+  background-color: var(--app-surface);
+  color: var(--app-heading);
+}
+
+.ant-input-affix-wrapper > input.ant-input,
+.ant-input-number-input {
+  background-color: transparent;
+  color: var(--app-heading);
+}
+
+.ant-input:hover,
+.ant-input-affix-wrapper:hover,
+.ant-input-number:hover,
+.ant-select:not(.ant-select-disabled):hover .ant-select-selector {
+  border-color: rgba(var(--app-primary-rgb), 0.5);
+}
+
+.ant-input:focus,
+.ant-input-focused,
+.ant-input-affix-wrapper-focused,
+.ant-input-affix-wrapper:focus,
+.ant-input-number-focused,
+.ant-select-focused:not(.ant-select-disabled).ant-select:not(.ant-select-customize-input) .ant-select-selector {
+  border-color: rgba(var(--app-primary-rgb), 0.5);
+  box-shadow: 0 0 0 0.2rem rgba(var(--app-primary-rgb), 0.12);
+}
+
+.ant-input::placeholder,
+.ant-input-number-input::placeholder,
+.ant-select-selection-placeholder {
+  color: var(--app-muted);
+  opacity: 0.8;
+}
+
+.ant-input[disabled],
+.ant-input-number-disabled,
+.ant-select-disabled.ant-select:not(.ant-select-customize-input) .ant-select-selector {
+  background-color: var(--app-hover);
+  color: var(--app-muted);
+}
+
+.ant-input-group-addon {
+  border-color: var(--app-border);
+  background-color: var(--app-bg);
+  color: var(--app-muted);
+}
+
+.ant-input-number-handler-wrap {
+  background-color: var(--app-surface);
+}
+
+.ant-input-number-handler {
+  border-color: var(--app-border);
+  color: var(--app-muted);
+}
+
+.ant-select-arrow,
+.ant-select-clear,
+.ant-input-clear-icon,
+.ant-input-suffix,
+.ant-input-prefix {
+  color: var(--app-muted);
+}
+
+.ant-select-clear {
+  background-color: var(--app-surface);
+}
+
+.ant-select-multiple .ant-select-selection-item {
+  border-color: var(--app-border);
+  background-color: var(--app-hover);
+}
+
+.ant-form-item-label > label {
+  color: var(--app-heading);
+}
+
+.ant-form-item-explain,
+.ant-form-item-extra {
+  color: var(--app-muted);
+}
+
+.ant-radio-inner,
+.ant-checkbox-inner {
+  border-color: var(--app-border);
+  background-color: var(--app-surface);
+}
+
+.ant-radio-checked .ant-radio-inner,
+.ant-radio-wrapper:hover .ant-radio-inner {
+  border-color: var(--app-primary);
+}
+
+.ant-checkbox-checked .ant-checkbox-inner {
+  border-color: var(--app-primary);
+  background-color: var(--app-primary);
+}
+
+// Radio buttons work as the dashboard's segmented switch
+.ant-radio-button-wrapper {
+  border-color: var(--app-border);
+  background-color: var(--app-surface);
+  color: var(--app-text);
+}
+
+.ant-radio-button-wrapper:not(:first-child)::before {
+  background-color: var(--app-border);
+}
+
+.ant-radio-button-wrapper:hover {
+  color: var(--app-primary);
+}
+
+.ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled),
+.ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled):hover {
+  border-color: rgba(var(--app-primary-rgb), 0.35);
+  background-color: rgba(var(--app-primary-rgb), 0.12);
+  color: var(--app-primary);
+}
+
+.ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled)::before {
+  background-color: rgba(var(--app-primary-rgb), 0.35);
+}
+
+.ant-slider-rail {
+  background-color: var(--app-grid);
+}
+
+.ant-slider:hover .ant-slider-rail {
+  background-color: var(--app-border);
+}
+
+.ant-slider-track,
+.ant-slider:hover .ant-slider-track {
+  background-color: var(--app-primary);
+}
+
+.ant-slider-handle {
+  border-color: var(--app-primary);
+  background-color: var(--app-surface);
+}
+
+.ant-slider-dot {
+  border-color: var(--app-grid);
+  background-color: var(--app-surface);
+}
+
+.ant-slider-mark-text {
+  color: var(--app-muted);
+}
+
+.ant-upload.ant-upload-drag {
+  border: 1px dashed var(--app-border);
+  border-radius: var(--app-radius);
+  background-color: var(--app-bg);
+}
+
+.ant-upload.ant-upload-drag:not(.ant-upload-disabled):hover {
+  border-color: var(--app-primary);
+}
+
+.ant-upload.ant-upload-drag p.ant-upload-text {
+  color: var(--app-heading);
+}
+
+.ant-upload.ant-upload-drag p.ant-upload-hint {
+  color: var(--app-muted);
+}
+
+.ant-upload-list-item-name,
+.ant-upload-list-item-info .anticon {
+  color: var(--app-text);
+}
+
+.ant-upload-list-item:hover .ant-upload-list-item-info {
+  background-color: var(--app-hover);
+}
+
+// ---------------------------------------------------------------
+// Popups: select, dropdown, tooltip, popover
+// ---------------------------------------------------------------
+.ant-select-dropdown,
+.ant-dropdown-menu {
+  padding: 0.5rem 0;
+  border-radius: var(--app-radius);
+  background-color: var(--app-surface);
+  box-shadow: var(--app-shadow-popup);
+}
+
+.ant-select-item,
+.ant-dropdown-menu-item,
+.ant-dropdown-menu-submenu-title {
+  color: var(--app-text);
+}
+
+.ant-dropdown-menu-item,
+.ant-dropdown-menu-submenu-title {
+  padding: 0.45rem 1.25rem;
+}
+
+.ant-select-item-option-active:not(.ant-select-item-option-disabled),
+.ant-dropdown-menu-item:hover,
+.ant-dropdown-menu-submenu-title:hover,
+.ant-dropdown-menu-item-active {
+  background-color: var(--app-hover);
+  color: var(--app-primary);
+}
+
+.ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
+  background-color: var(--app-menu-active);
+  color: var(--app-primary);
+  font-weight: 500;
+}
+
+.ant-select-item-empty,
+.ant-dropdown-menu-item-disabled,
+.ant-dropdown-menu-item-disabled:hover {
+  color: var(--app-muted);
+}
+
+.ant-dropdown-menu-item-divider {
+  background-color: var(--app-border);
+}
+
+.ant-tooltip-inner {
+  padding: 0.45rem 0.7rem;
+  border-radius: var(--app-radius);
+  background-color: var(--app-tooltip-bg);
+  color: #fff;
+  box-shadow: 0 6px 18px rgba(38, 60, 85, 0.25);
+}
+
+.ant-tooltip-arrow-content {
+  --antd-arrow-background-color: var(--app-tooltip-bg);
+
+  background-color: var(--app-tooltip-bg);
+}
+
+html[data-theme="dark"] .ant-tooltip-inner {
+  border: 1px solid var(--app-border);
+}
+
+.ant-popover-inner {
+  border-radius: var(--app-radius);
+  background-color: var(--app-surface);
+  box-shadow: var(--app-shadow-popup);
+}
+
+.ant-popover-title {
+  border-bottom-color: var(--app-border);
+  color: var(--app-heading);
+}
+
+.ant-popover-inner-content,
+.ant-popover-message {
+  color: var(--app-text);
+}
+
+.ant-popover-arrow-content {
+  --antd-arrow-background-color: var(--app-surface);
+
+  background-color: var(--app-surface);
+}
+
+// Menus inside dropdowns and page navigation
+.ant-menu {
+  background-color: var(--app-surface);
+  color: var(--app-text);
+}
+
+.ant-menu-horizontal {
+  border-bottom-color: var(--app-border);
+}
+
+.ant-menu-item:hover,
+.ant-menu-item-active,
+.ant-menu-submenu-title:hover {
+  color: var(--app-primary);
+}
+
+.ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {
+  background-color: var(--app-menu-active);
+  color: var(--app-primary);
+}
+
+// ---------------------------------------------------------------
+// Modals and drawers: surface header, the footer on the page colour
+// ---------------------------------------------------------------
+.ant-modal-mask,
+.ant-drawer-mask {
+  background-color: var(--app-modal-mask);
+}
+
+.ant-modal-content {
+  overflow: hidden;
+  border-radius: var(--app-radius);
+  background-color: var(--app-surface);
+  box-shadow: 0 1.5rem 3rem rgba(0, 0, 0, 0.14);
+}
+
+.ant-modal-header,
+.ant-drawer-header {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--app-border);
+  background-color: var(--app-surface);
+}
+
+.ant-modal-title,
+.ant-drawer-title,
+.ant-modal-confirm-body .ant-modal-confirm-title {
+  color: var(--app-heading);
+  font-weight: 500;
+  font-size: 0.875rem;
+  line-height: 1.5rem;
+}
+
+.ant-modal-close,
+.ant-drawer-close {
+  color: var(--app-muted);
+}
+
+.ant-modal-close:hover,
+.ant-drawer-close:hover {
+  color: var(--app-heading);
+}
+
+.ant-modal-body {
+  padding: 1.25rem 1.5rem;
+  font-size: 0.875rem;
+}
+
+.ant-modal-confirm-body .ant-modal-confirm-content {
+  color: var(--app-text);
+}
+
+.ant-modal-footer,
+.ant-drawer-footer {
+  padding: 0.75rem 1.5rem;
+  border-top: 1px solid var(--app-border);
+  background-color: var(--app-bg);
+}
+
+.ant-drawer-content {
+  background-color: var(--app-surface);
+}
+
+.ant-drawer-body {
+  color: var(--app-text);
+}
+
+// ---------------------------------------------------------------
+// Feedback: alerts, tags, badges, progress, notifications
+// ---------------------------------------------------------------
+// Alerts: a surface panel with a coloured left edge and icon
+.ant-alert {
+  --alert-accent: var(--app-primary);
+
+  border: 1px solid var(--app-border);
+  border-left: 3px solid var(--alert-accent);
+  border-radius: var(--app-radius);
+  background-color: var(--app-surface);
+  box-shadow: var(--app-shadow);
+}
+
+.ant-alert-info {
+  --alert-accent: var(--app-info);
+}
+
+.ant-alert-success {
+  --alert-accent: var(--app-success);
+}
+
+.ant-alert-warning {
+  --alert-accent: var(--app-warning);
+}
+
+.ant-alert-error {
+  --alert-accent: var(--app-danger);
+}
+
+.ant-alert-icon {
+  color: var(--alert-accent);
+}
+
+.ant-alert-message {
+  color: var(--app-heading);
+}
+
+.ant-alert-description {
+  color: var(--app-text);
+}
+
+.ant-alert-close-icon .anticon-close {
+  color: var(--app-muted);
+}
+
+// Tags: soft (tinted), like the SeaweedFS status badges
+.ant-tag {
+  border-color: transparent;
+  border-radius: var(--app-radius-sm);
+  background-color: var(--app-hover);
+  color: var(--app-text);
+  font-weight: 500;
+}
+
+.ant-tag-blue,
+.ant-tag-processing {
+  border-color: transparent;
+  background-color: rgba(var(--app-primary-rgb), 0.12);
+  color: var(--app-primary);
+}
+
+.ant-tag-green,
+.ant-tag-success {
+  border-color: transparent;
+  background-color: rgba(var(--app-success-rgb), 0.14);
+  color: var(--app-success-text);
+}
+
+.ant-tag-orange,
+.ant-tag-warning {
+  border-color: transparent;
+  background-color: rgba(var(--app-warning-rgb), 0.14);
+  color: var(--app-warning);
+}
+
+.ant-tag-red,
+.ant-tag-error {
+  border-color: transparent;
+  background-color: rgba(var(--app-danger-rgb), 0.12);
+  color: var(--app-danger);
+}
+
+.ant-badge-count {
+  box-shadow: 0 0 0 1px var(--app-surface);
+}
+
+.ant-badge-status-text {
+  color: var(--app-text);
+}
+
+.ant-progress-inner {
+  background-color: var(--app-grid);
+}
+
+.ant-progress-text {
+  color: var(--app-text);
+}
+
+.ant-progress-circle-trail {
+  stroke: var(--app-grid) !important;
+}
+
+.ant-notification-notice,
+.ant-message-notice-content {
+  border-radius: var(--app-radius);
+  background-color: var(--app-surface);
+  color: var(--app-text);
+  box-shadow: var(--app-shadow-popup);
+}
+
+.ant-notification-notice-message {
+  color: var(--app-heading);
+}
+
+.ant-notification-notice-description {
+  color: var(--app-text);
+}
+
+.ant-notification-close-icon {
+  color: var(--app-muted);
+}
+
+// ---------------------------------------------------------------
+// Layout helpers: dividers, collapse, breadcrumb, pagination, empty
+// ---------------------------------------------------------------
+.ant-divider {
+  border-top-color: var(--app-border);
+}
+
+.ant-divider-vertical {
+  border-left-color: var(--app-border);
+}
+
+.ant-divider-horizontal.ant-divider-with-text {
+  border-top-color: var(--app-border);
+  color: var(--app-heading);
+}
+
+.ant-divider-horizontal.ant-divider-with-text::before,
+.ant-divider-horizontal.ant-divider-with-text::after {
+  border-top-color: var(--app-border);
+}
+
+.ant-collapse {
+  border-color: var(--app-border);
+  border-radius: var(--app-radius);
+  background-color: var(--app-surface);
+}
+
+.ant-collapse > .ant-collapse-item {
+  border-bottom-color: var(--app-border);
+}
+
+.ant-collapse > .ant-collapse-item > .ant-collapse-header {
+  color: var(--app-heading);
+}
+
+.ant-collapse-content {
+  border-top-color: var(--app-border);
+  background-color: var(--app-surface);
+  color: var(--app-text);
+}
+
+.ant-collapse-borderless {
+  background-color: var(--app-bg);
+}
+
+.ant-breadcrumb,
+.ant-breadcrumb a,
+.ant-breadcrumb-separator {
+  color: var(--app-muted);
+}
+
+.ant-breadcrumb a:hover {
+  color: var(--app-primary);
+}
+
+.ant-breadcrumb > nz-breadcrumb-item:last-child,
+.ant-breadcrumb > nz-breadcrumb-item:last-child a {
+  color: var(--app-heading);
+}
+
+.ant-pagination-item,
+.ant-pagination-prev .ant-pagination-item-link,
+.ant-pagination-next .ant-pagination-item-link {
+  border-color: var(--app-border);
+  border-radius: var(--app-radius-sm);
+  background-color: var(--app-surface);
+  color: var(--app-text);
+}
+
+.ant-pagination-item a {
+  color: var(--app-text);
+}
+
+.ant-pagination-item:hover,
+.ant-pagination-prev:hover .ant-pagination-item-link,
+.ant-pagination-next:hover .ant-pagination-item-link {
+  border-color: var(--app-primary);
+  color: var(--app-primary);
+}
+
+.ant-pagination-item:hover a {
+  color: var(--app-primary);
+}
+
+.ant-pagination-item-active,
+.ant-pagination-item-active:hover {
+  border-color: var(--app-primary);
+  background-color: var(--app-primary);
+}
+
+.ant-pagination-item-active a,
+.ant-pagination-item-active:hover a {
+  color: #fff;
+}
+
+.ant-pagination-disabled .ant-pagination-item-link,
+.ant-pagination-disabled:hover .ant-pagination-item-link {
+  border-color: var(--app-border);
+  color: var(--app-muted);
+}
+
+.ant-empty-description {
+  color: var(--app-muted);
+}
+
+.ant-empty-img-simple-ellipse {
+  fill: var(--app-hover);
+}
+
+.ant-empty-img-simple-g {
+  stroke: var(--app-border);
+}
+
+.ant-empty-img-simple-path {
+  fill: var(--app-bg);
+}
+
+.ant-skeleton-content .ant-skeleton-title,
+.ant-skeleton-content .ant-skeleton-paragraph > li {
+  background-color: var(--app-hover);
+}
+
+// Overlay that dims content while it loads
+.ant-spin-container::after {
+  background-color: var(--app-surface);
+}
+
+// Bootstrap Icons inside buttons (page header actions)
+.ant-btn:has(> .bi) {
+  display: inline-flex;
+  gap: 0.4rem;
+  align-items: center;
+  justify-content: center;
+}
+
+// Diagrams shipped as SVG images (memory models) can't use the tokens: in
+// the dark theme they're inverted and hue-rotated back, so they keep their hues.
+html[data-theme="dark"] img[src$=".svg"]:not([src*="flink.svg"]) {
+  filter: invert(0.88) hue-rotate(180deg);
+}
+
+// Wide tables scroll inside their card instead of widening the page
+.ant-table-content {
+  overflow-x: auto;
+}
+
+@media (max-width: 767.98px) {
+  .ant-table-thead > tr > th,
+  .ant-table-tbody > tr > td {
+    white-space: nowrap;
+  }
+}
