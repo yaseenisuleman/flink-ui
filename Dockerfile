@@ -27,4 +27,5 @@ COPY nginx/default.conf.template /etc/nginx/templates/default.conf.template
 COPY --from=build /app/web /usr/share/nginx/html
 EXPOSE 8080
 LABEL org.opencontainers.image.title="flink-ui" \
+      org.opencontainers.image.source="https://github.com/yaseenisuleman/flink-ui" \
       org.opencontainers.image.description="Refreshed Flink web dashboard, served separately from Flink"
